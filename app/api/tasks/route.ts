@@ -58,8 +58,12 @@ export async function GET(req: NextRequest) {
         limit
       }
     });
-  } catch (error) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Get tasks error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Server error' }, 
+      { status: 500 }
+    );
   }
 }
 
@@ -84,7 +88,11 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(task, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Create task error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Server error' }, 
+      { status: 500 }
+    );
   }
 }

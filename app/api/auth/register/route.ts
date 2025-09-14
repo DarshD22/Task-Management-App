@@ -30,9 +30,10 @@ export async function POST(req: NextRequest) {
       token,
       user: { id: user._id, email: user.email }
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.error('Registration error:', error);
     return NextResponse.json(
-      { error: 'Server error' },
+      { error: error.message || 'Server error' },
       { status: 500 }
     );
   }

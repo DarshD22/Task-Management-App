@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Task from '@/models/Task';
 import { verifyToken } from '@/lib/auth';
+import mongoose from 'mongoose';
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const token = req.cookies.get('token')?.value;
@@ -21,11 +22,14 @@ export async function PUT(
     await dbConnect();
     const data = await req.json();
     
+    // Convert string ID to MongoDB ObjectId
+    const taskId = new mongoose.Types.ObjectId(context.params.id);
+    
     const task = await Task.findOneAndUpdate(
-      { _id: params.id, userId: payload.userId },
+      { _id: taskId, userId: payload.userId },
       data,
       { new: true }
-    );
+    ).lean();
 
     if (!task) {
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
@@ -40,7 +44,7 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const token = req.cookies.get('token')?.value;
@@ -55,8 +59,10 @@ export async function DELETE(
 
     await dbConnect();
     
+    const taskId = new mongoose.Types.ObjectId(context.params.id);
+    
     const task = await Task.findOneAndDelete({
-      _id: params.id,
+      _id: taskId,
       userId: payload.userId
     }).lean();
 
