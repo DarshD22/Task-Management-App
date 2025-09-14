@@ -4,9 +4,15 @@ import Task from '@/models/Task';
 import { verifyToken } from '@/lib/auth';
 import mongoose from 'mongoose';
 
+type Context = {
+  params: {
+    id: string;
+  };
+};
+
 export async function PUT(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: Context
 ) {
   try {
     const token = req.cookies.get('token')?.value;
@@ -23,7 +29,7 @@ export async function PUT(
     const data = await req.json();
     
     // Convert string ID to MongoDB ObjectId
-    const taskId = new mongoose.Types.ObjectId(context.params.id);
+    const taskId = new mongoose.Types.ObjectId(params.id);
     
     const task = await Task.findOneAndUpdate(
       { _id: taskId, userId: payload.userId },
@@ -44,7 +50,7 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: Context
 ) {
   try {
     const token = req.cookies.get('token')?.value;
@@ -59,7 +65,7 @@ export async function DELETE(
 
     await dbConnect();
     
-    const taskId = new mongoose.Types.ObjectId(context.params.id);
+    const taskId = new mongoose.Types.ObjectId(params.id);
     
     const task = await Task.findOneAndDelete({
       _id: taskId,
