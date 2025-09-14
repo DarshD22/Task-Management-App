@@ -9,6 +9,15 @@ import TaskCard from "@/components/TaskCard";
 import TaskForm from "@/components/TaskForm";
 import TaskFilters from "@/components/TaskFilters";
 
+
+interface Task {
+  _id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'done';
+  createdAt: string;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [page, setPage] = useState(1);
@@ -95,7 +104,7 @@ export default function DashboardPage() {
         ) : (
           <>
             <div className="grid gap-4 mb-6">
-              {data?.tasks?.map((task: any) => (
+              {data?.tasks?.map((task: Task) => (
                 <TaskCard key={task._id} task={task} />
               ))}
             </div>

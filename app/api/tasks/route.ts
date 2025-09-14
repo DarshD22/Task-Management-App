@@ -3,6 +3,13 @@ import dbConnect from '@/lib/db';
 import Task from '@/models/Task';
 import { verifyToken } from '@/lib/auth';
 
+interface TaskQuery {
+  userId: string;
+  $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
+  status?: string;
+}
+
+
 export async function GET(req: NextRequest) {
   try {
     const token = req.cookies.get('token')?.value;
@@ -23,7 +30,7 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
 
-    const query: any = { userId: payload.userId };
+    const query: TaskQuery = { userId: payload.userId };
     
     if (search) {
       query.$or = [

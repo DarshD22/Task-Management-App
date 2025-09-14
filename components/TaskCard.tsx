@@ -13,6 +13,15 @@ interface Task {
   createdAt: string;
 }
 
+interface TasksData {
+  tasks: Task[];
+  pagination: {
+    total: number;
+    page: number;
+    pages: number;
+    limit: number;
+  };
+}
 export default function TaskCard({ task }: { task: Task }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -35,7 +44,7 @@ export default function TaskCard({ task }: { task: Task }) {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
       const previousTasks = queryClient.getQueryData(['tasks']);
       
-      queryClient.setQueryData(['tasks'], (old: any) => {
+      queryClient.setQueryData(['tasks'], (old: TasksData | undefined) => {
         if (!old || !old.tasks) return old;
         return {
           ...old,
@@ -70,7 +79,7 @@ export default function TaskCard({ task }: { task: Task }) {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
       const previousTasks = queryClient.getQueryData(['tasks']);
       
-      queryClient.setQueryData(['tasks'], (old: any) => {
+      queryClient.setQueryData(['tasks'], (old: TasksData | undefined) => {
         if (!old || !old.tasks) return old;
         return {
           ...old,
